@@ -3,12 +3,13 @@ mod utils;
 use wasm_bindgen::prelude::*;
 use web_sys::{WebGl2RenderingContext, WebGlProgram, WebGlShader};
 
-#[wasm_bindgen(start)]
-fn start() -> Result<(), JsValue> {
-    let document = web_sys::window().unwrap().document().unwrap();
-    let canvas = document.get_element_by_id("canvas").unwrap();
-    let canvas: web_sys::HtmlCanvasElement = canvas.dyn_into::<web_sys::HtmlCanvasElement>()?;
+#[wasm_bindgen]
+extern "C" {
+    #[wasm_bindgen(js_namespace = console)]
+    fn log(s: &str);
+}
 
+pub fn render(canvas: web_sys::HtmlCanvasElement) -> Result<(), JsValue> {
     let context = canvas
         .get_context("webgl2")?
         .unwrap()
@@ -81,6 +82,19 @@ fn start() -> Result<(), JsValue> {
     context.bind_vertex_array(Some(&vao));
     let vert_count = (vertices.len() / 3) as i32;
     draw(&context, vert_count);
+    Ok(())
+}
+
+#[wasm_bindgen(start)]
+fn start() -> Result<(), JsValue> {
+    let document = web_sys::window().unwrap().document().unwrap();
+    let canvas = document.get_element_by_id("canvas").unwrap();
+    let canvas: web_sys::HtmlCanvasElement = canvas.dyn_into::<web_sys::HtmlCanvasElement>()?;
+    canvas.set_width(web_sys::window().unwrap().inner_width().unwrap().as_f64().unwrap() as u32);
+    canvas.set_height(web_sys::window().unwrap().inner_height().unwrap().as_f64().unwrap() as u32);
+
+    render(canvas)?;
+    log("in start");
 
     Ok(())
 }

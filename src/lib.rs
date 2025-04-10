@@ -3,12 +3,6 @@ mod utils;
 use wasm_bindgen::prelude::*;
 use web_sys::{WebGl2RenderingContext, WebGlProgram, WebGlShader};
 
-#[wasm_bindgen]
-extern "C" {
-    #[wasm_bindgen(js_namespace = console)]
-    fn log(s: &str);
-}
-
 pub fn render(canvas: web_sys::HtmlCanvasElement) -> Result<(), JsValue> {
     let context = canvas
         .get_context("webgl2")?
@@ -92,10 +86,7 @@ fn start() -> Result<(), JsValue> {
     let canvas: web_sys::HtmlCanvasElement = canvas.dyn_into::<web_sys::HtmlCanvasElement>()?;
     canvas.set_width(web_sys::window().unwrap().inner_width().unwrap().as_f64().unwrap() as u32);
     canvas.set_height(web_sys::window().unwrap().inner_height().unwrap().as_f64().unwrap() as u32);
-
     render(canvas)?;
-    log("in start");
-
     Ok(())
 }
 
